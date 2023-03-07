@@ -7,11 +7,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  PermissionsAndroid,
+  Linking,
   FlatList,
 } from 'react-native';
 import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
 import Modal from 'react-native-modal';
 import {CameraIcon, ImageIcon} from './icons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface GalleryProps extends ImageProps {
   onChange?: (file: ImageOrVideo) => void;
@@ -24,6 +27,23 @@ export const Gallery = (props: GalleryProps) => {
   const close = () => setVisible(false);
   const open = () => setVisible(true);
 
+  const permission = async () => {
+    // We need to ask permission for Android only
+    if (Platform.OS === 'android') {
+      // Calling the permission function
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Example App Camera Permission',
+          message: 'Example App needs access to your camera',
+        },
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        return Linking.openSettings();
+      }
+    }
+  };
+
   const chooseImage = () => {
     ImagePicker.openPicker({
       width: 300,
@@ -31,7 +51,6 @@ export const Gallery = (props: GalleryProps) => {
       multiple: true,
     })
       .then(images => {
-        //console.log(images.path, 'Gallery');
         setImgGallery(images);
         setUri(images.path);
         props.onChange?.(images);
@@ -39,31 +58,31 @@ export const Gallery = (props: GalleryProps) => {
       .finally(close);
   };
 
-  const openCamera = () => {
+  const openCamera = async () => {
+    permission();
     ImagePicker.openCamera({
       width: 300,
       height: 400,
-      multiple: true,
     })
-      .then(images => {
-        setImgGallery(images);
-        setUri(images.path);
-        props.onChange?.(images);
+      .then(image => {
+        setImgGallery(image);
+        setUri(image.path);
+        props.onChange?.(image);
       })
       .finally(close);
   };
- 
+
   return (
     <>
-      <TouchableOpacity onPress={open}>
-      <Image
-          style={styles.avatar}
-          {...props}
-          source={uri ? {uri} : props.source}
-        />        
+      <TouchableOpacity onPress={open} style={styles.wrapper}>
+        <MaterialIcons
+          name={'add-photo-alternate'}
+          color="black"
+          size={48}
+          style={styles.addImage}
+        />
       </TouchableOpacity>
-      
-      
+
       <Modal
         isVisible={visible}
         onBackButtonPress={close}
@@ -85,12 +104,18 @@ export const Gallery = (props: GalleryProps) => {
 };
 
 const styles = StyleSheet.create({
-  avatar: {
-    paddingTop: 20,
-    height: 100,
-    width: 100,
-    borderRadius: 100,
-    padding: 20,
+  wrapper: {
+    flex: 1,
+    alignContent: 'flex-end',
+  },
+  addImage: {
+    flex: 1,
+    textAlign: 'right',
+    alignContent: 'flex-end',
+    height: 50,
+    width: 50,
+    flexDirection: 'row',
+    position: 'absolute',
   },
 
   options: {

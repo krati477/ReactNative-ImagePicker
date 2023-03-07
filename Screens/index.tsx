@@ -9,6 +9,7 @@ export const Profile = () => {
   const onAvatarChange = (image: ImageOrVideo) => {
     //console.log(image);
   };
+  
   return (
     <View style={styles.scroll}>
       <StatusBar barStyle="dark-content" />
@@ -24,24 +25,7 @@ export const Profile = () => {
   );
 };
 
-export const ImageGallery = () => {
-    const OnAddImage = (image: ImageOrVideo) => {
-      console.log(image, "ImageGallery");
-    };
-  
-    return (
-      <View style={styles.scroll}>
-        <StatusBar barStyle="dark-content" />
-        <View style={styles.userRow}>
-          <Gallery
-            onChange={OnAddImage}
-            source={require('./avatar-placeholder.png')}
-          /><UserInfo />
-        </View>
-        <View style={styles.content} />
-      </View>
-    );
-  };
+
 
 const styles = StyleSheet.create({
   scroll: {

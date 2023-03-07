@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 import com.android.build.OutputFile
 
@@ -118,6 +119,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        // release {
+        //     storeFile file('my-upload-key.keystore')
+        //     storePassword 'java@1121'
+        //     keyAlias 'my-key-alias'
+        //     keyPassword 'java@1121'
+        // }
     }
     buildTypes {
         debug {
